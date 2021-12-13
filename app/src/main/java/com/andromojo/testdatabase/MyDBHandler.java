@@ -13,6 +13,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 public class MyDBHandler extends SQLiteOpenHelper {
     public static final int DB_VERSION = 2;
@@ -94,7 +95,7 @@ public class MyDBHandler extends SQLiteOpenHelper {
         super.close();
     }
 
-    public String loadHandler(){
+    public ArrayList<Student> loadHandler(){
         try{
             createDatabase();
         }catch (IOException e){
@@ -103,16 +104,20 @@ public class MyDBHandler extends SQLiteOpenHelper {
         String result = "";
         SQLiteDatabase db = this.getReadableDatabase();
 
+        ArrayList<Student> studentArrayList = new ArrayList<>();
+
         Cursor c = db.rawQuery("select * from Student", null);
 
         while (c.moveToNext()){
-            int result_id = c.getInt(0);
-            String result_name = c.getString(1);
-            result += String.valueOf(result_id) +" " + result_name + System.getProperty("line.separator");
+            Student student = new Student(c.getInt(0), c.getString(1));
+            studentArrayList.add(student);
+//            int result_id = c.getInt(0);
+//            String result_name = c.getString(1);
+//            result += String.valueOf(result_id) +" " + result_name + System.getProperty("line.separator");
         }
         c.close();
         db.close();
 
-        return result;
+        return studentArrayList;
     }
 }
